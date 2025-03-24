@@ -31,19 +31,21 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+
+      # Ensure Gunicorn is installed if using it for deployment
+      - name: Install Gunicorn
+        run: pip install gunicorn
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip -r release.zip . -x "venv/*" 
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,18 +66,17 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_98AB401D605843AB958C03E6A4B97F20 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_126CE7AF8E444C78BE91B5C05D7E337A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ECAE977A063A4D2C8511FAA66EA51B54 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'smart-task-backend'
           slot-name: 'Production'
-          
+          package: .
