@@ -1,6 +1,6 @@
 // script.js
 
-const API_URL = "https://smart-task-func.azurewebsites.net/api/TaskFunction?"; // Replace with your actual Function URL
+const API_URL = "https://smart-task-func.azurewebsites.net/api/TaskFunction?code=https://smart-task-func.azurewebsites.net/api/TaskFunction?"; // Replace with your actual Function URL
 
 // Function to fetch all tasks
 async function getTasks() {
